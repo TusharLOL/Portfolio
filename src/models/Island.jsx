@@ -25,9 +25,11 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props})=> {
   const dampingFactor = 0.95
 
   const handlePointerDown = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setIsRotating(true)  
+    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      e.stopPropagation();
+      e.preventDefault();
+      setIsRotating(true);
+    }  
 
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
 
@@ -76,9 +78,11 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props})=> {
   }
 
   const handleTouchStart = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setIsRotating(true);
+    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      e.stopPropagation();
+      e.preventDefault();
+      setIsRotating(true);
+    }
   
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     lastX.current = clientX;
