@@ -75,6 +75,35 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props})=> {
     }
   }
 
+  const handleTouchStart = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(true);
+  
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    lastX.current = clientX;
+  }
+  
+  const handleTouchEnd = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(false);
+  }
+  
+  const handleTouchMove = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  
+    if (isRotating) {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const delta = (clientX - lastX.current) / viewport.width;
+  
+      islandRef.current.rotation.y += delta * 0.01 * Math.PI;
+      lastX.current = clientX;
+      rotationSpeed.current = delta * 0.01 * Math.PI;
+    }
+  }
+
   useEffect(() => {
     const canvas = gl.domElement;
     document.addEventListener('pointerdown', handlePointerDown)
@@ -82,6 +111,9 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props})=> {
     document.addEventListener('pointerup', handlePointerUp)
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keyup', handleKeyUp)
+    document.addEventListener('touchstart', handleTouchStart)
+    document.addEventListener('touchmove', handleTouchMove)
+    document.addEventListener('touchend', handleTouchEnd)
 
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
@@ -89,6 +121,9 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props})=> {
       document.removeEventListener('pointerup', handlePointerUp)
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('keyup', handleKeyUp)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
     }
   }, [gl, handlePointerDown, handlePointerMove, handlePointerUp])
 
